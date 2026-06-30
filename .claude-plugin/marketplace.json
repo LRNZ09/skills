@@ -1,0 +1,20 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "genius-skills",
+  "description": "Lorenzo Pieri's personal agent skills for Claude Code",
+  "owner": {
+    "name": "Lorenzo Pieri"
+  },
+  "plugins": [
+    {
+      "name": "genius-skills",
+      "source": "./",
+      "description": "Personal agent skills for commits, debugging, planning, and more",
+      "author": {
+        "name": "Lorenzo Pieri"
+      },
+      "homepage": "https://github.com/LRNZ09/skills",
+      "category": "productivity"
+    }
+  ]
+}
