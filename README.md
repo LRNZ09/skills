@@ -52,6 +52,8 @@ My personal config (the `agents.toml` that fetches these) lives in
 
 ## Skills
 
+Authored by me: `council`.
+
 Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT —
 see [NOTICE](./NOTICE)): `caveman`, `diagnose`, `grill`, `handoff`,
 `improve-codebase-architecture`, `prototype`, `tdd`, `triage`.
