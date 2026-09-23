@@ -31,7 +31,7 @@ claude plugin update genius-skills@genius-skills
 ```sh
 npx skills@latest add LRNZ09/skills/skills/<name>
 # e.g.
-npx skills@latest add LRNZ09/skills/skills/commit-series
+npx skills@latest add LRNZ09/skills/skills/council
 ```
 
 ## Via @sentry/dotagents
@@ -42,7 +42,7 @@ repo. Trust the org, then add the skills you want:
 
 ```sh
 npx @sentry/dotagents trust add LRNZ09
-npx @sentry/dotagents add LRNZ09/skills commit-series   # one skill
+npx @sentry/dotagents add LRNZ09/skills council         # one skill
 npx @sentry/dotagents add LRNZ09/skills --all           # all of them
 ```
 
