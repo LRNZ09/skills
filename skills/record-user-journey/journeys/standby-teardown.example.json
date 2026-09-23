@@ -1,0 +1,111 @@
+{
+  "name": "standby-teardown",
+  "baseUrl": "http://localhost:5173",
+  "targetMatch": "localhost:5173|127\\.0\\.0\\.1:5173",
+  "viewport": { "width": 1920, "height": 1080 },
+  "userAgent": "Mozilla/5.0 (SMART-TV; LINUX; Tizen 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Version/6.0 TV Safari/537.36",
+  "fps": 30,
+
+  "killLabel": "the platform kills the app here (instant close on hidden)",
+  "hideSelectors": ["[aria-label*='devtools' i]", "[title*='devtools' i]"],
+
+  "track": {
+    "urlIncludes": "/events",
+    "fields": { "event": "type", "position": "position" }
+  },
+
+  "checks": {
+    "progress": {
+      "path": "/api/progress-status?item_id={{item.id}}",
+      "headers": { "Authorization": "Bearer {{localStorage:app:access_token}}" },
+      "entryWhen": "body && body.progress",
+      "fields": { "progress": "progress" }
+    }
+  },
+
+  "steps": [
+    { "verifyViewport": true },
+
+    { "goto": "/home", "waitFor": "[data-testid='item.title']" },
+    { "read": { "js": "[...document.querySelectorAll(\"[data-testid='item.title']\")].map(e => e.innerText.trim())", "as": "listBefore" } },
+    { "caption": "1920x1080 TV - the app on its home page" },
+    { "hold": 5000 },
+
+    { "caption": "opening the grid from the menu" },
+    { "press": "ArrowLeft", "untilSelector": "[data-testid='nav.home'][data-focused=true], [data-testid='nav.guide'][data-focused=true]", "gap": 700 },
+    { "press": "ArrowDown", "untilFocus": "nav.guide", "gap": 700 },
+    { "press": "Enter", "untilPath": "/guide" },
+    { "expect": { "selector": "[data-testid='grid.selected-item']" } },
+
+    {
+      "scan": {
+        "caption": "stepping back through the grid to an unwatched item",
+        "key": "ArrowLeft",
+        "max": 16,
+        "gap": 1400,
+        "selector": "[data-testid='grid.selected-item']",
+        "read": { "id": "data-item-id", "live": "data-on-air", "title": "text" },
+        "skipIf": "item.live === 'true'",
+        "check": "progress",
+        "acceptIf": "!check.entry",
+        "as": "item"
+      }
+    },
+    { "caption": "\"{{item.title}}\" - not watched yet" },
+    { "hold": 2500 },
+
+    { "press": "Enter", "untilPath": "/details/" },
+    { "expect": { "selector": "[data-testid='details.play']" } },
+    { "check": "progress", "as": "before", "failIf": "check.entry" },
+    { "caption": "progress-status: HTTP {{before.status}}, no entry" },
+    { "hold": 4000 },
+
+    { "press": "Enter", "untilPath": "/player" },
+    { "play": { "holdMs": 0 } },
+    { "caption": "playing - the app is in the foreground" },
+    { "resetTimeline": true },
+    { "hold": 11000 },
+
+    { "armKill": true },
+    {
+      "standby": {
+        "caption": "device goes to standby - the screen goes off and the app is killed",
+        "blackout": true,
+        "hiddenMs": 4000,
+        "afterMs": 2000
+      }
+    },
+    { "check": "progress", "as": "after" },
+
+    { "caption": "device back on - the app relaunches" },
+    { "hold": 2600 },
+    { "goto": "/home", "waitFor": "[data-testid='item.title']" },
+    { "read": { "js": "[...document.querySelectorAll(\"[data-testid='item.title']\")].map(e => e.innerText.trim())", "as": "listAfter" } },
+    {
+      "ring": {
+        "selectorAll": "[data-testid='item.title']",
+        "matchText": "{{item.title}}",
+        "closest": "[data-testid='item']",
+        "label": "created by the request sent at standby",
+        "as": "tile"
+      }
+    },
+    {
+      "caption": {
+        "if": "!!facts.tile",
+        "then": "the list now includes \"{{item.title}}\"",
+        "else": "\"{{item.title}}\" is still missing from the list"
+      }
+    },
+    {
+      "summary": {
+        "title": "standby teardown - progress saved when the screen goes off",
+        "lines": [
+          { "label": "before", "text": "HTTP {{before.status}}, entry {{before.entry}}", "color": "#9d93b8" },
+          { "label": "after", "text": "HTTP {{after.status}}, progress {{after.progress}}", "color": "#63f08f" }
+        ]
+      }
+    },
+    { "hold": 10000 }
+  ]
+}
