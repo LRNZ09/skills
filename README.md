@@ -52,7 +52,7 @@ My personal config (the `agents.toml` that fetches these) lives in
 
 ## Skills
 
-Authored by me: `codename`, `council`.
+Authored by me: `codename`, `council`, `record-user-journey`.
 
 Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT —
 see [NOTICE](./NOTICE)): `caveman`, `diagnose`, `grill`, `handoff`,
