@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "genius-skills",
-  "description": "Personal agent skills for commits, debugging, planning, and more",
+  "description": "Personal agent skills for debugging, planning, and more",
   "author": {
     "name": "Lorenzo Pieri",
     "url": "https://lorenzopieri.dev"
