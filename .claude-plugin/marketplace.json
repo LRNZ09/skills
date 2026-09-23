@@ -9,7 +9,7 @@
     {
       "name": "genius-skills",
       "source": "./",
-      "description": "Personal agent skills for commits, debugging, planning, and more",
+      "description": "Personal agent skills for debugging, planning, and more",
       "author": {
         "name": "Lorenzo Pieri"
       },
