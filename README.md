@@ -46,9 +46,10 @@ npx @sentry/dotagents add LRNZ09/skills council         # one skill
 npx @sentry/dotagents add LRNZ09/skills --all           # all of them
 ```
 
-`~/.agents` is managed entirely by `@sentry/dotagents` — never edit it by hand.
+`~/.agents` is managed by `@sentry/dotagents` — use its CLI, not copied files.
 My personal config (the `agents.toml` that fetches these) lives in
-[LRNZ09/dotagents](https://github.com/LRNZ09/dotagents).
+[LRNZ09/consus](https://github.com/LRNZ09/consus), at
+`configs/agents/agents.toml`.
 
 ## Skills
 
