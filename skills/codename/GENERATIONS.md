@@ -9,13 +9,12 @@ just never let it become the world's default answer, and treat a name already sp
 Every world here holds far more than six words.
 
 **Roman religion & mythology comes first on purpose** — it is the org default. My own repos
-already live there: `aurora` the ambient, `vesta` the hearth, `janus` the gateway, `fides` the record,
-`lararium` the shrine that holds the household gods. The convention is that the *name's* domain
-matches the repo's function — a deity, a cult object, a rite, a festival or a sacred place all
-qualify equally. The whole of Roman paganism is in scope; that the first few names happen to be
-domestic is a coincidence, not a rule, so do not narrow the world to the household cult. Start
-here and leave only when the brief genuinely points elsewhere — and say so when you do, because
-the name will read as a stranger next to the family.
+already live there: `aurora` the ambient, `vesta` the hearth, `janus` the gateway. The convention
+is that the *name's* domain matches the repo's function — a deity, a cult object, a rite, a
+festival or a sacred place all qualify equally. The whole of Roman paganism is in scope; that the
+first few names happen to be domestic is a coincidence, not a rule, so do not narrow the world to
+the household cult. Start here and leave only when the brief genuinely points elsewhere — and say
+so when you do, because the name will read as a stranger next to the family.
 
 **Register** is how the world reads before scope adjusts it.
 
