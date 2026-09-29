@@ -11,8 +11,8 @@ Every world here holds far more than six words.
 **Roman religion & mythology comes first on purpose** — it is the org default. My own repos
 already live there: `aurora` the ambient, `vesta` the hearth, `janus` the gateway. The convention
 is that the *name's* domain matches the repo's function — a deity, a cult object, a rite, a
-festival or a sacred place all qualify equally. The whole of Roman paganism is in scope; that the
-first few names happen to be domestic is a coincidence, not a rule, so do not narrow the world to
+festival or a sacred place all qualify equally. The whole of Roman paganism is in scope; that vesta
+and janus happen to be domestic is a coincidence, not a rule, so do not narrow the world to
 the household cult. Start here and leave only when the brief genuinely points elsewhere — and say
 so when you do, because the name will read as a stranger next to the family.
 
