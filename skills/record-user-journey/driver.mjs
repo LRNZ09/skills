@@ -823,10 +823,13 @@ async function finish(extra = {}) {
       // The final frame's duration is the real time it stayed on screen, not a constant: a
       // trailing hold over a static page emits no frames, and a hard-coded value threw that
       // dwell away, leaving the payoff of the recording on screen for a fraction of a second.
+      // Durations are the exact gaps, never padded up to a floor: frames arrive in bursts,
+      // and a 16ms floor on each burst added seconds that never happened, so the video ran
+      // longer than the journey and drifted away from the caption timeline.
       const dur = i < frames.length - 1
-        ? Math.max(0.016, frames[i + 1].ts - frames[i].ts)
+        ? frames[i + 1].ts - frames[i].ts
         : Math.max(0.4, lastFrameHeldFor);
-      lines.push(`file '${frames[i].file}'`, `duration ${dur.toFixed(3)}`);
+      lines.push(`file '${frames[i].file}'`, `duration ${dur.toFixed(6)}`);
     }
     await writeFile(path.join(OUT, "frames.txt"), lines.join("\n"));
   }
