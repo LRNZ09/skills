@@ -122,9 +122,15 @@ async function evaluate(expression) {
 const captionTimeline = [];
 const videoTimeNow = () =>
   frames.length ? +(frames.at(-1).ts - frames[0].ts).toFixed(3) : 0;
-const caption = (text) => {
+// Stamp the caption with the first frame that shows it. The last frame *before* it is no
+// good: on a static screen no frames arrive, so that frame can be many seconds old and the
+// caption would land at the start of the still stretch instead of its end.
+const caption = async (text) => {
+  const seen = frames.length;
+  await evaluate(`__journeyCaption(${JSON.stringify(text)})`);
+  for (let i = 0; i < 20 && capturing && frames.length === seen; i++) await sleep(50);
   captionTimeline.push({ text, at: videoTimeNow() });
-  return evaluate(`__journeyCaption(${JSON.stringify(text)})`).then(() => log("caption:", text));
+  log("caption:", text);
 };
 
 const VK = { ArrowLeft: 37, ArrowUp: 38, ArrowRight: 39, ArrowDown: 40, Enter: 13, Escape: 27, Backspace: 8 };
