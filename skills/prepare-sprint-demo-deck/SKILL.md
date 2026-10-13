@@ -1,6 +1,6 @@
 ---
 name: prepare-sprint-demo-deck
-description: Use when preparing a sprint demo or sprint review deck of one presenter's own work — building it from their sprint's tickets and pull requests, writing or trimming speaker notes to a time slot, fact-checking every slide and spoken line before presenting, or fixing text that is inaccurate, inconsistent or overflowing. Tuned for short Marp markdown decks. Not for recording the video, team-wide or retrospective decks, or other talks.
+description: Use when preparing a sprint demo or sprint review deck of one presenter's own work — building it from their sprint's tickets and pull requests, writing or trimming speaker notes to a time slot, fact-checking every slide and spoken line before presenting, fixing text that is inaccurate, inconsistent or overflowing, or making a slide's demo video autoplay with working controls. Tuned for short Marp markdown decks. Not for recording the video, team-wide or retrospective decks, or other talks.
 ---
 
 # Prepare a Sprint Demo Deck
@@ -114,4 +114,5 @@ Run before calling the deck ready, and again after any batch of edits.
 | write or edit any text on a slide, caption or note | `wording.md` |
 | write speaker notes, fix their format, or cut the speech to fit the slot | `speaker-notes.md` |
 | verify the deck, answer "is this accurate?", or check a claim the user dictated | `accuracy-review.md` |
-| render, fix an overflowing slide or misplaced emoji, or set up presenter view | `marp-rendering.md` |
+| render, fix an overflowing slide or misplaced emoji, or set up video and presenter view | `marp-rendering.md` |
+| add autoplay and a full-window player to slide videos | `marp-engine.mjs` (bundled Marp engine; setup in `marp-rendering.md`) |

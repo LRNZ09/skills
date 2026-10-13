@@ -93,4 +93,7 @@ asking. When the user declines a cut, keep it on the list for later.
   Edge; in any other browser, confirm it in the dry run, including that both windows stay
   in sync.
 - Also export the notes to a text file for paper or a second screen.
+- With the bundled engine, videos autoplay in the audience window only. A click opens the
+  full-window player only in the window that was clicked, so click it on the audience
+  screen.
 - Ask the presenter to do one timed read-through and report their real pace.
