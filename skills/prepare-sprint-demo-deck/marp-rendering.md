@@ -28,7 +28,7 @@
 - Marp CLI reads `.marprc.yml` only from the current directory, never from a parent. Run
   every command from the folder that holds it, with the deck's path, or pass
   `--config-file <path>` (`-c`). Otherwise the config is skipped without a warning: default
-  theme, no engine, and no `<video>` on the slides.
+  theme, no engine, and videos lose `data-autoplay`.
 - One folder per deck; keep media under it and reference it with relative paths.
 
 ## Render commands
