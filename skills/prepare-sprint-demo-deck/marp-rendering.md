@@ -20,6 +20,7 @@
   themeSet: ./<theme>.css     # registers the theme only; each deck sets `theme: <name>`
   allowLocalFiles: true
   html: true
+  engine: ./marp-engine.mjs   # only when slides have video; see "Video"
   ```
 
 - Each deck's front matter must say `theme: <name>`, the name in the CSS's
@@ -27,7 +28,7 @@
 - Marp CLI reads `.marprc.yml` only from the current directory, never from a parent. Run
   every command from the folder that holds it, with the deck's path, or pass
   `--config-file <path>` (`-c`). Otherwise the config is skipped without a warning: default
-  theme, and no `<video>` on the slides.
+  theme, no engine, and no `<video>` on the slides.
 - One folder per deck; keep media under it and reference it with relative paths.
 
 ## Render commands
@@ -75,9 +76,37 @@ section img.emoji {
   margin: 0;
   vertical-align: -0.15em;
 }
+
+/* Native video controls don't work inside Marp's scaled slide: Safari draws them at the
+ * wrong scale and clips them, Chromium shows them only while the pointer moves. Hide them;
+ * a click opens the full-window player from marp-engine.mjs. */
+section video {
+  cursor: zoom-in;
+}
+
+section video::-webkit-media-controls {
+  display: none !important;
+}
 ```
 
 ## Video
+
+With the bundled `marp-engine.mjs` (copy it next to `.marprc.yml` and set `engine:`):
+
+```html
+<video data-autoplay src="./media/demo.mp4" poster="./media/demo-still.png" muted playsinline style="display:block;width:100%;"></video>
+```
+
+- `data-autoplay`: plays muted from the start when its slide becomes current, pauses when
+  the deck moves on. Only in the audience window, never in the presenter view or its
+  next-slide preview.
+- Click: opens a full-window player at the same position, with native controls, in the
+  clicked window only. The presenter view holds the live deck too, but only the slide number
+  is synced, so click the video on the audience screen. Escape or a click on the backdrop
+  closes it; the slide video jumps to where the full-window one stopped, and plays on only
+  if both were playing.
+- Styles injected by an engine must not contain `>`: Marp escapes it inside the injected
+  block.
 
 Long demo recordings: cut the waiting, keep every moment where something happens, and show
 a "» N s later" badge for about two seconds at each cut. Captions inside the video keep the
@@ -89,10 +118,13 @@ confirm each server serves the intended build before recording.
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| default theme, video missing from its slide | rendered from a folder without `.marprc.yml` | run from the config's folder or pass `--config-file <path>` |
+| default theme, no autoplay, video missing from its slide | rendered from a folder without `.marprc.yml` | run from the config's folder or pass `--config-file <path>` |
 | deck renders with the default theme although the config is found | front matter lacks `theme: <name>` | add it |
 | render never finishes | the CLI is waiting for standard input | add `--no-stdin`; kill the stuck process |
 | emoji on its own line | theme displays images as blocks | add the emoji rule above to the theme |
 | text overlaps the footer | slide too full | see "Layout check" |
+| video controls vanish about 2 s after the pointer stops | Chromium's native behaviour; CSS can't pin them (internal parts) | expected: pause to keep them visible; keep the native controls, and build a custom control bar only if the presenter asks |
+| controls flicker or hide immediately in one browser only | browser-specific behaviour | reproduce in another Chromium browser before changing the deck |
 | video doesn't load in the HTML | the HTML was moved away from its media | present from the deck folder |
 | presenter view doesn't open | pop-up blocked; Caps Lock on (only a lowercase `p` opens it); or the browser blocks site storage for the page | allow pop-ups, turn Caps Lock off, allow site data, press p again |
+| an engine style has no effect | `>` was escaped, or a theme rule targets an element under `<body>` | rewrite without `>`; style it from the engine |
