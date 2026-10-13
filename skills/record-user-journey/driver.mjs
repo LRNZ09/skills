@@ -546,6 +546,15 @@ const steps = {
     log("timeline reset");
   },
 
+  // Fail matching requests in the browser, as DevTools request blocking does, so the app gets
+  // a real network error instead of a patched fetch. `"block": []` lifts it.
+  async block(step) {
+    const urls = (Array.isArray(step.block) ? step.block : [step.block]).map(fill);
+    await send("Network.enable");
+    await send("Network.setBlockedURLs", { urls });
+    log(urls.length ? `blocking ${urls.join(", ")}` : "request blocking lifted");
+  },
+
   async armKill() {
     await evaluate(`(() => { __journey.deadEnabled = true; return 1; })()`);
     log("kill-on-hidden model armed");
@@ -739,6 +748,7 @@ async function restoreBrowser() {
   restored = true;
   try {
     await send("Page.stopScreencast");
+    await send("Network.setBlockedURLs", { urls: [] });
     await send("Emulation.clearDeviceMetricsOverride");
     await send("Emulation.setUserAgentOverride", { userAgent: "" });
     if (journey.focusEmulation === true)
