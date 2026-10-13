@@ -157,6 +157,7 @@ One action per step. `{{fact.path}}` interpolates anything an earlier step store
 | `{"scan": {…}}` | step through a list, checking each candidate, stop at the first that qualifies |
 | `{"play": {"holdMs": n}}` | wait for video that is decoding *and advancing*, then dwell |
 | `{"check": "name", "as": "before"}` | run a declared HTTP check from inside the page |
+| `{"block": ["*pattern*"]}` | fail matching requests in the browser, like DevTools request blocking; `[]` lifts it |
 | `{"armKill": true}` | model a platform that kills the app the instant it is hidden |
 | `{"standby": {…}}` | black the screen, hide the page for real, restore |
 | `{"ring": {…}}`, `{"caption": "…"}` | annotate the frame |
