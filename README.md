@@ -71,6 +71,7 @@ My personal config (the `agents.toml` that fetches these) lives in
 - `council`
 - `prepare-sprint-demo-deck`
 - `record-user-journey`
+- `review-memory`
 
 ## Secret-leak guards
 
