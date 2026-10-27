@@ -18,6 +18,7 @@ Rules for every slide line, caption and spoken note. The audience hears each lin
 | Say which one when there could be several | "the <chat tool> release bot" | "the bot" when the audience could ask "which one?" |
 | Set a new tool against the one the room already knows | "a new command lists a release's tickets for staging, pre-production and production, while the <chat tool> release bot only posts for production" | "a new command lists a release's tickets" when a bot already posts a list |
 | Drop technicalities the point doesn't need | "bundled next to the other player modules" | "bundled next to the <N> player modules" |
+| Say internal terms in the audience's words | "a recording played right after the show" | "a recording whose end padding was still running", in front of a room that includes non-developers |
 | Shorten a label once the context is set | "the PR review skill", after the slide has introduced the skills | the full product-qualified name in every line |
 | Use the technically right verb | "bundled twice" (it was in the build) | "downloaded twice" |
 | Carry the status into every line about the item | "a small resolver clean-up, still in review" | "the resolver now resets" when its PR is still open |
@@ -52,6 +53,7 @@ Real corrections, generalised. Use them as the bar.
 | "Each PR keeps one NX and one Lighthouse report" | the second report only appears for some PRs, and only on one branch | "Each PR into development keeps one NX report, plus a Lighthouse report when the app changes" |
 | "Now it's less than half the size." | true only uncompressed | "Now it's less than half the size uncompressed." |
 | "Claude Code skills for every team" (closing slide) | the PRs are still open | "Claude Code skills on their way to other teams" |
+| "**Now the time counts, and the bar is grey where it isn't recorded yet.**" (demo caption) | a bold "Now…" sentence under screenshots reads as a big announcement | "After the fix, the time counts and the bar is grey past what's recorded so far." |
 
 ## Humour
 
