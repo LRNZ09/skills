@@ -45,8 +45,8 @@ _<emoji> <Type>, <status>._
 - <one guard or limit that matters, with its real number>
 ```
 
-Take `<status>` from the Statuses table, and name an environment only when the status has
-one: `_✨ Feature, in review._`, `_🐛 Bugfix, in testing on <env>._`
+Take `<status>` from the Statuses table: `_✨ Feature, in review._`,
+`_🐛 Bugfix, done, in the next release._`, `_🐛 Bugfix, on production._`
 
 **Explanatory "under the hood" slide**: symptom, then cause, then fix.
 
@@ -72,8 +72,11 @@ _<emoji> <Type>, <status> (<one light aside, optional>)._
 item its own status: `- **<Tool>** (\`<repo>\`): <change>. _<Status>._` No type emoji here;
 the slide title already says what these are.
 
-**Demo slide**: the video, then a one- or two-line caption that states exactly what was
-simulated and the single takeaway in bold. See `marp-rendering.md` for video setup.
+**Demo slide**: the video or the before/after screenshots, then a one- or two-line caption
+that states exactly what was simulated or shown and what differs. Write it like a figure
+caption: plain weight, no sentence in bold, no "Now…" opener, so it doesn't read as an
+announcement. Keep its wording close to the slide's speaker note. See `marp-rendering.md`
+for video setup.
 
 ## Type labels
 
@@ -90,7 +93,7 @@ Use one emoji per type, the same everywhere in the deck.
 - Pick the type from **what shipped**, not the ticket type: a performance ticket that only
   shipped a click fix is a 🐛 Bugfix.
 - Single-item slides: emoji plus text at the start of the status line,
-  e.g. `_🐛 Bugfix, in testing on development._`
+  e.g. `_🐛 Bugfix, done, in the next release._`
 - Grouped slides ("Also this sprint"): emoji only, at the start of each bullet.
 - Team tooling bullets: no type emoji.
 
@@ -102,20 +105,25 @@ Re-read them live before handing over. Use the tracker and code-host facts, not 
 |---|---|
 | _In progress_ | ticket in progress, no PR ready for review |
 | _In review_ | PR open (all parts, or say "last part in review") |
-| _Merged_ | merged, but not necessarily released or deployed |
-| _In testing on <env>_ | merged, deployed to that environment, ticket in testing |
-| _On <env>_ | deployed there; say which environment |
+| _Merged_ | merged, and nothing ships to users (tests, tooling, docs) |
+| _In testing_ | merged, ticket in testing: QA is on it now |
+| _Done, in the next release_ | ticket done, merged, not on production yet |
+| _On production_ | deployed to production; say which apps when not all |
 | _Behind a feature flag_ | users cannot reach it without the flag |
 | _Internal use for now_ | it exists but only the team uses it |
 
-"Merged" is not "available": say who has it already and who gets it in the next release.
+Don't name pre-release environments (development, staging, pre-production): the room
+doesn't know them, and the status they stand for is "in testing" or "done, in the next
+release". Never write "in testing" for a ticket QA has already closed. "Merged" is not
+"available": say who has it already and who gets it in the next release.
 
 ## Ordering
 
 1. Headline items first, then the demo, then "Also this sprint", "Under the hood",
    "Team tooling", closing.
-2. Inside a grouped slide: **done** (On <env>, In testing on <env>, Merged, Behind a
-   feature flag, Internal use for now), then **In review**, then **In progress**.
+2. Inside a grouped slide: **done** (On production, Done in the next release, In testing,
+   Merged, Behind a feature flag, Internal use for now), then **In review**, then
+   **In progress**.
 3. Footer keys, the speaker note and the closing summary list items in the same order as
    the slide.
 

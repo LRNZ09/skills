@@ -36,16 +36,33 @@ Now we let the player retry on its own, so the picture just waits and carries on
 
 - Write it as a speech, not as slide text read aloud. The notes say **less** than the slide;
   the audience reads the details.
+- Talk, don't recite. Open a point the way you'd tell a colleague: a scene or a plain
+  statement, main clause first ("Say you're watching a recording that's already finished, and
+  the connection drops for several seconds."). A long subordinate clause up front sounds read
+  from a book ("When one segment of a finished recording kept failing to load, …"). Keep the
+  opening line in everyday words; the slide carries the technical term.
+- Don't explain what the room already knows ("the embedded player, the one partners put on
+  their own sites").
 - Open with two paragraphs: a greeting ("Hey everyone!"), then what's coming ("Here's what
   I've done this sprint so far.").
 - Use transitions that tell the room where they are: "I'll start by demoing…", "Next, a few
   smaller things.", "Also under the hood…", "Finally, some tooling for all of us."
+- These examples are patterns, not lines to copy. Read the prior decks' notes first and word
+  the greeting, the "what's coming" line and every transition differently: the room hears
+  the same deck format every sprint. The two closing lines may stay the same.
 - Introduce each problem in user terms before the finding or fix.
-- Say the status of anything not done in the same sentence: "still in review", "in
-  progress", "in its next release". A note never says "now" about unmerged work.
+- The slide's status line carries the status, so a note doesn't repeat it ("with the next
+  release…", "that one's in the next release"). Say it only when it adds something the slide
+  doesn't: a consequence ("until then production still goes over") or a caveat ("the data
+  check is still pending"). Work still in review or in progress is the exception: say so in
+  the same sentence as the claim, and never say "now" about unmerged work.
 - Prefer the symptom and the fix over the mechanism. If the presenter says it's hard to
   picture, cut the mechanism from the note and keep it on the slide.
 - Contractions, short sentences, one idea per sentence.
+- Write for the ear. Join two clauses with "and" or "so", or make them two sentences,
+  instead of a colon: a colon reads well and is hard to hear. Name the thing instead of a
+  loose "it": "…but they weren't the cause, and anyone who played a recording that soon got
+  the bug", not "…weren't the cause: anyone who played a recording that soon got it".
 - The demo note starts the video immediately and talks over it; cue lines to the captions
   the video shows.
 - Close with two paragraphs: "That's it from me." and "Thanks, and happy to take any

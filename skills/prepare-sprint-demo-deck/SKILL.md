@@ -43,7 +43,11 @@ Do these in order. Report between phases; do not chain them silently.
 2. **Curate.** Keep issues the presenter worked on while assignee, and PRs they authored.
    Leave out work they only reported or reviewed for someone else. When an issue changed
    hands during the sprint, ask who should present it. Ask whether in-progress items go in
-   this deck or the next one. Then build the slide plan: read `slide-patterns.md`.
+   this deck or the next one. Check the previous deck: an item it already showed comes back
+   only when it has since reached its users (released to production, or now usable by the
+   people it's for), as a one-line status update. A purely technical item (tests, lint,
+   internal clean-up) whose status merely moved, say from in review to merged, stays out.
+   Then build the slide plan: read `slide-patterns.md`.
    Budget the slot before drafting: the script holds about
    `(slot seconds − video seconds) × 140 / 60` spoken words (3 minutes with a 40 s video:
    about 325). Give each planned slide its seconds. Items that don't fit become one-line
@@ -68,8 +72,12 @@ Do these in order. Report between phases; do not chain them silently.
    a measurement or a PR table, never from memory.
 2. **Live status.** Re-check tracker and PR states right before handing over; PRs merge
    overnight.
-3. **Ownership.** Only the presenter's assigned or authored work. Credit others' work
-   accurately. Frame a change by what it adds ("now also fits a Mac that has a custom
+3. **Ownership.** Only the presenter's assigned or authored work. Don't name another
+   developer for their dev work on an item unless the presenter really worked with them on
+   it, or the claim isn't true without it. State the outcome instead ("every event we send
+   carries all three", not "<name>'s change adds the other two"), and never present their
+   part as the presenter's. Reviewers and the ticket's reporter can stay named ("<name>
+   spotted it in the data and wrote the first fix"). Frame a change by what it adds ("now also fits a Mac that has a custom
    setup"), not by what earlier work got wrong ("no longer assumes your Mac is fresh out of
    the box"). A bugfix still states its symptom plainly.
 4. **Identifiers.** No PR numbers anywhere on slides. Ticket keys go in footers only.

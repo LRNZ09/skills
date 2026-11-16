@@ -18,6 +18,7 @@ Rules for every slide line, caption and spoken note. The audience hears each lin
 | Say which one when there could be several | "the <chat tool> release bot" | "the bot" when the audience could ask "which one?" |
 | Set a new tool against the one the room already knows | "a new command lists a release's tickets for staging, pre-production and production, while the <chat tool> release bot only posts for production" | "a new command lists a release's tickets" when a bot already posts a list |
 | Drop technicalities the point doesn't need | "bundled next to the other player modules" | "bundled next to the <N> player modules" |
+| Say internal terms in the audience's words | "a recording played right after the show" | "a recording whose end padding was still running", in front of a room that includes non-developers |
 | Shorten a label once the context is set | "the PR review skill", after the slide has introduced the skills | the full product-qualified name in every line |
 | Use the technically right verb | "bundled twice" (it was in the build) | "downloaded twice" |
 | Carry the status into every line about the item | "a small resolver clean-up, still in review" | "the resolver now resets" when its PR is still open |
@@ -31,6 +32,8 @@ Rules for every slide line, caption and spoken note. The audience hears each lin
 | One term per concept | "drop" on the slide and in the note | "drop" on the slide, "hiccup" in the note |
 | Avoid unbacked frequency words | "could get a new pre-roll" | "often", "usually", "most" without data |
 | Attribute the change to your code | "now we let the library retry on its own" | "the library now retries" when it always did |
+| Put a person in front of the action | "we fixed it with a hotfix the same day", "we deleted about 30,700 lines" | "a hotfix addressed it", "30,700 lines deleted": a thing or a passive standing in for people's work. Describing what the product does stays as is ("the release showed an error") |
+| Say "we" for work the team planned | "we released a new one on the 4th" | "I released it" when the PO and the team planned it and the presenter only ran the deploy; keep "I" for work the presenter did alone, like recording the demo |
 | Use the umbrella term when platforms differ | "error message" | "dialog" when one platform shows an overlay |
 | Claim the mechanism, not the appearance | "the fix covers video and subtitle streams too" | "video and subtitles behave the same" |
 | Contractions in speech and slides | doesn't, can't, it's, they've | does not, cannot, it is |
@@ -52,6 +55,7 @@ Real corrections, generalised. Use them as the bar.
 | "Each PR keeps one NX and one Lighthouse report" | the second report only appears for some PRs, and only on one branch | "Each PR into development keeps one NX report, plus a Lighthouse report when the app changes" |
 | "Now it's less than half the size." | true only uncompressed | "Now it's less than half the size uncompressed." |
 | "Claude Code skills for every team" (closing slide) | the PRs are still open | "Claude Code skills on their way to other teams" |
+| "**Now the time counts, and the bar is grey where it isn't recorded yet.**" (demo caption) | a bold "Now…" sentence under screenshots reads as a big announcement | "After the fix, the time counts and the bar is grey past what's recorded so far." |
 
 ## Humour
 
