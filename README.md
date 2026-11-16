@@ -38,12 +38,26 @@ npx skills@latest add LRNZ09/skills/skills/council
 
 The `skills/<name>/SKILL.md` layout is what `@sentry/dotagents` discovers, so you
 can fetch these into any project — or your `~/.agents` — without vendoring the
-repo. Trust the org, then add the skills you want:
+repo. Trust the org first:
 
 ```sh
 npx @sentry/dotagents trust add LRNZ09
-npx @sentry/dotagents add LRNZ09/skills council         # one skill
-npx @sentry/dotagents add LRNZ09/skills --all           # all of them
+```
+
+This repo is also a plugin marketplace, so `add` installs it as the
+`genius-skills` plugin rather than as single skills:
+
+```sh
+npx @sentry/dotagents add LRNZ09/skills --all
+```
+
+For single skills, write the block into `agents.toml` by hand, then run
+`npx @sentry/dotagents install`:
+
+```toml
+[[skills]]
+name = "council"   # one skill; "*" for all of them
+source = "LRNZ09/skills"
 ```
 
 `~/.agents` is managed by `@sentry/dotagents` — use its CLI, not copied files.
