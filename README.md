@@ -53,7 +53,10 @@ My personal config (the `agents.toml` that fetches these) lives in
 
 ## Skills
 
-Authored by me: `codename`, `council`, `prepare-sprint-demo-deck`, `record-user-journey`.
+- `codename`
+- `council`
+- `prepare-sprint-demo-deck`
+- `record-user-journey`
 
 ## Secret-leak guards
 
