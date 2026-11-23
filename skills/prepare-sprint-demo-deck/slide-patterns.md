@@ -35,7 +35,7 @@ open PRs and tickets still in progress wait for the next deck (see "Merged work 
 
 ## <What changed, as a plain statement>
 
-_<emoji> <Type>._
+_<emoji> <Type>_
 
 **Before** <what the user saw>. <the worst consequence, one sentence>.
 
@@ -50,7 +50,7 @@ _<emoji> <Type>._
 ```markdown
 ## Under the hood: <component>
 
-_<emoji> <Type> (<one light aside, optional>)._
+_<emoji> <Type>_
 
 **Before** <the symptom people saw>.
 
@@ -89,7 +89,9 @@ Use one emoji per type, the same everywhere in the deck.
 
 - Pick the type from **what shipped**, not the ticket type: a performance ticket that only
   shipped a click fix is a 🐛 Bugfix.
-- Single-item slides: emoji plus text in the type line, e.g. `_🐛 Bugfix._`
+- Single-item slides: emoji plus text in the type line, e.g. `_🐛 Bugfix_`. A type line that
+  holds only the type ends without a period; one with an aside (see Humour in `wording.md`)
+  ends with one.
 - Grouped slides ("Also this sprint"): emoji only, at the start of each bullet.
 - Team tooling bullets: no type emoji.
 
