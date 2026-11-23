@@ -5,7 +5,7 @@
 - Deck outline
 - Templates
 - Type labels
-- Statuses
+- Merged work only
 - Ordering
 - Footers and identifiers
 - Closing slide
@@ -23,8 +23,8 @@
 | last | Closing | one summary bullet per slide group, then an invitation for questions |
 
 Work without a ticket goes on the "Under the hood" or "Team tooling" slides at the end.
-Leave out anything the presenter was not assignee or author of. Ask before including an
-item that is still in progress; deferring it to the next sprint's deck is usually better.
+Leave out anything the presenter was not assignee or author of. Only merged work goes in;
+open PRs and tickets still in progress wait for the next deck (see "Merged work only").
 
 ## Templates
 
@@ -35,7 +35,7 @@ item that is still in progress; deferring it to the next sprint's deck is usuall
 
 ## <What changed, as a plain statement>
 
-_<emoji> <Type>, <status>._
+_<emoji> <Type>._
 
 **Before** <what the user saw>. <the worst consequence, one sentence>.
 
@@ -45,15 +45,12 @@ _<emoji> <Type>, <status>._
 - <one guard or limit that matters, with its real number>
 ```
 
-Take `<status>` from the Statuses table: `_✨ Feature, in review._`,
-`_🐛 Bugfix, done, in the next release._`, `_🐛 Bugfix, on production._`
-
 **Explanatory "under the hood" slide**: symptom, then cause, then fix.
 
 ```markdown
 ## Under the hood: <component>
 
-_<emoji> <Type>, <status> (<one light aside, optional>)._
+_<emoji> <Type> (<one light aside, optional>)._
 
 **Before** <the symptom people saw>.
 
@@ -62,15 +59,15 @@ _<emoji> <Type>, <status> (<one light aside, optional>)._
 **Now** <the fix>, <the measurable result or a small table>.
 ```
 
-**Grouped items** ("Also this sprint"): one bullet per item, emoji first, status last.
+**Grouped items** ("Also this sprint"): one bullet per item, emoji first.
 
 ```markdown
-- <emoji> **<Short name>**: <what it does now, one line where possible>. _<Status>._
+- <emoji> **<Short name>**: <what it does now, one line where possible>.
 ```
 
-**Team tooling**: name the repository in code style after the item name, and give each
-item its own status: `- **<Tool>** (\`<repo>\`): <change>. _<Status>._` No type emoji here;
-the slide title already says what these are.
+**Team tooling**: name the repository in code style after the item name:
+`- **<Tool>** (\`<repo>\`): <change>.` No type emoji here; the slide title already says
+what these are.
 
 **Demo slide**: the video or the before/after screenshots, then a one- or two-line caption
 that states exactly what was simulated or shown and what differs. Write it like a figure
@@ -92,38 +89,36 @@ Use one emoji per type, the same everywhere in the deck.
 
 - Pick the type from **what shipped**, not the ticket type: a performance ticket that only
   shipped a click fix is a 🐛 Bugfix.
-- Single-item slides: emoji plus text at the start of the status line,
-  e.g. `_🐛 Bugfix, done, in the next release._`
+- Single-item slides: emoji plus text in the type line, e.g. `_🐛 Bugfix._`
 - Grouped slides ("Also this sprint"): emoji only, at the start of each bullet.
 - Team tooling bullets: no type emoji.
 
-## Statuses
+## Merged work only
 
-Re-read them live before handing over. Use the tracker and code-host facts, not intent.
+The deck shows merged work and says nothing about where it stands in the release flow. A
+sprint's work rarely reaches production inside the same sprint, so a release status would
+read the same on every slide and tell the room nothing.
 
-| Write | Only when |
-|---|---|
-| _In progress_ | ticket in progress, no PR ready for review |
-| _In review_ | PR open (all parts, or say "last part in review") |
-| _Merged_ | merged, and nothing ships to users (tests, tooling, docs) |
-| _In testing_ | merged, ticket in testing: QA is on it now |
-| _Done, in the next release_ | ticket done, merged, not on production yet |
-| _On production_ | deployed to production; say which apps when not all |
-| _Behind a feature flag_ | users cannot reach it without the flag |
-| _Internal use for now_ | it exists but only the team uses it |
-
-Don't name pre-release environments (development, staging, pre-production): the room
-doesn't know them, and the status they stand for is "in testing" or "done, in the next
-release". Never write "in testing" for a ticket QA has already closed. "Merged" is not
-"available": say who has it already and who gets it in the next release.
+- **What goes in**: a ticket goes in once every PR for it has merged. While any is still
+  open, the whole ticket waits, like open PRs and tickets still in progress. Work without a
+  ticket goes in PR by PR. Re-check live PR states right before handing over, so an item
+  merged overnight can join and nothing unmerged stays in. Nothing needs listing: the next
+  run looks back one sprint and finds what waited.
+- **Type lines**: a single-item slide's type line is its type alone, plus at most one light
+  aside (see "Humour" in `wording.md`).
+- **Limits**: a limit that holds at every release stage stays, written as a condition:
+  "on TVs that count frames", "behind a feature flag", "internal use for now", "we haven't
+  measured the gain yet".
+- **Once per item**: an item an earlier deck already showed stays out, including as a "now
+  on production" one-liner. An item left out while in review that has merged since is new
+  to the room, so it can go in.
+- Speaker notes follow the same rule.
 
 ## Ordering
 
 1. Headline items first, then the demo, then "Also this sprint", "Under the hood",
    "Team tooling", closing.
-2. Inside a grouped slide: **done** (On production, Done in the next release, In testing,
-   Merged, Behind a feature flag, Internal use for now), then **In review**, then
-   **In progress**.
+2. Inside a grouped slide: most visible first.
 3. Footer keys, the speaker note and the closing summary list items in the same order as
    the slide.
 
@@ -142,13 +137,13 @@ release". Never write "in testing" for a ticket QA has already closed. "Merged" 
 
 ## That's all, folks!
 
-- **<Headline short name>**: <one-line result>. <status>.
+- **<Headline short name>**: <one-line result>.
 - **Also this sprint**: <item names, in slide order>.
 - **Under the hood**: <one phrase per under-the-hood slide>.
-- **Team tooling**: <items>, with any still in review phrased as "on their way".
+- **Team tooling**: <items>.
 
 > Questions? Happy to dig into any of these.
 ```
 
 Bullets for grouped slides reuse those slides' titles. Each bullet must match the slide it
-summarises: same status, same numbers, no claim the slide does not make.
+summarises: same numbers, same conditions, no claim the slide does not make.

@@ -19,7 +19,7 @@ Find what you can; ask one question for the rest.
 
 | Input | Default / where to find it |
 |---|---|
-| Sprint | the sprint being demoed: usually the active sprint on the presenter's board, but the one that just closed if a new sprint has already started; confirm name, id, start and end dates |
+| Sprint | the sprint being demoed: usually the active sprint on the presenter's board, but the one that just closed if a new sprint has already started; confirm name, id, start and end dates, plus the previous sprint's start date (Gather looks back to it) |
 | Presenter | the user; their tracker account and code-host account |
 | Demo date | ask; it goes on the title slide |
 | Time slot | ask (a typical slot is 3 minutes) |
@@ -33,20 +33,19 @@ Find what you can; ask one question for the rest.
 Do these in order. Report between phases; do not chain them silently.
 
 1. **Gather.** Collect every candidate item:
-   - tracker issues in the sprint the presenter was **assignee** of at any point, plus their
-     issues whose status changed inside the sprint window;
-   - pull requests the presenter **authored** that were opened or merged in the window, in
-     **every** repository of the workspace, not only the main one;
-   - for each item: ticket key, PR, live tracker status, live PR state, deployed
-     environments, and what actually shipped (which can differ from the ticket title).
+   - tracker issues the presenter was **assignee** of at any point, plus their issues whose
+     status changed, since the start of the previous sprint (this sprint plus the one before);
+   - pull requests the presenter **authored** that were opened or merged since the start of
+     the previous sprint, in **every** repository of the workspace, not only the main one;
+   - for each item: ticket key, PR, live tracker status, live PR state, and what actually
+     shipped (which can differ from the ticket title).
    With more than a handful of items, verify them in parallel, one researcher per item.
 2. **Curate.** Keep issues the presenter worked on while assignee, and PRs they authored.
    Leave out work they only reported or reviewed for someone else. When an issue changed
-   hands during the sprint, ask who should present it. Ask whether in-progress items go in
-   this deck or the next one. Check the previous deck: an item it already showed comes back
-   only when it has since reached its users (released to production, or now usable by the
-   people it's for), as a one-line status update. A purely technical item (tests, lint,
-   internal clean-up) whose status merely moved, say from in review to merged, stays out.
+   hands during the sprint, ask who should present it. Keep only merged work (a ticket once
+   all its PRs have merged). Grep every earlier deck for each candidate's ticket key and topic
+   and drop what one already showed. What waits comes back as a candidate next time by itself
+   (see "Merged work only" in `slide-patterns.md`).
    Then build the slide plan: read `slide-patterns.md`.
    Budget the slot before drafting: the script holds about
    `(slot seconds − video seconds) × 140 / 60` spoken words (3 minutes with a 40 s video:
@@ -62,16 +61,17 @@ Do these in order. Report between phases; do not chain them silently.
    read the rendered slides back.
 7. **Hand over.** After the last edit, do one spelling and grammar pass over every slide,
    caption and note in the source. List each change in one line, re-render, then report the
-   timing table, what to check in the dry run, and anything still open.
+   timing table, what was left out (it comes back by itself next time), what to check in the
+   dry run, and anything still open.
 
 ## Non-negotiables
 
 1. **Accuracy.** Every factual sentence on a slide or in a note has a source you checked:
-   code on the default branch (or the PR's head commit for work still in review), merge
-   commit, PR description and state, tracker status, deployment record. Numbers come from
-   a measurement or a PR table, never from memory.
-2. **Live status.** Re-check tracker and PR states right before handing over; PRs merge
-   overnight.
+   code on the default branch, merge commit, PR description and state, tracker status.
+   Numbers come from a measurement or a PR table, never from memory.
+2. **Merged only.** Every item in the deck is merged, and no slide or note says where it
+   stands in the release (see "Merged work only" in `slide-patterns.md`). Re-check PR states
+   right before handing over, since PRs merge overnight.
 3. **Ownership.** Only the presenter's assigned or authored work. Don't name another
    developer for their dev work on an item unless the presenter really worked with them on
    it, or the claim isn't true without it. State the outcome instead ("every event we send
@@ -100,12 +100,12 @@ Run before calling the deck ready, and again after any batch of edits.
 | Area | Check |
 |---|---|
 | Accuracy | `accuracy-review.md` pass done; every finding applied or explicitly kept by the user |
-| Status | every status line and "In review"/"Merged" tag matches the live tracker and PR state |
-| Ownership | every item is the presenter's; deferred items are noted for the next deck |
-| Ordering | grouped items run done → in review → in progress (see `slide-patterns.md`); footer keys, notes and closing summary follow the same order |
-| Labels | single-item slides open with an emoji + type status line; ticketed grouped items start with the type emoji; one emoji per type throughout |
+| Merged only | every item's PR is merged per its live state (a ticket only once all its PRs are); no earlier deck showed it; no slide or note gives a release status (see "Merged work only" in `slide-patterns.md`) |
+| Ownership | every item is the presenter's |
+| Ordering | footer keys, notes and closing summary follow the slide's item order (see `slide-patterns.md`) |
+| Labels | single-item slides open with an emoji + type line; ticketed grouped items start with the type emoji; one emoji per type throughout |
 | Identifiers | no PR numbers; footers hold ticket keys only, in item order |
-| Consistency | statuses, numbers, names and terms match across slide, note, caption and closing slide |
+| Consistency | numbers, names, conditions and terms match across slide, note, caption and closing slide |
 | Wording | `wording.md` rules hold: exact components, stated conditions, no jargon, contractions, no repeated openers |
 | Spelling | one spelling and grammar pass over every slide, caption and note, after the last edit; each change reported |
 | Notes format | one sentence per paragraph, blank line between them, `[~N s]` budget first, stage cues on their own line |
@@ -118,7 +118,7 @@ Run before calling the deck ready, and again after any batch of edits.
 
 | Open when you need to... | Read |
 |---|---|
-| decide which slides exist, their order, templates, type labels, statuses or footers | `slide-patterns.md` |
+| decide what goes in, which slides exist, their order, templates, type labels or footers | `slide-patterns.md` |
 | write or edit any text on a slide, caption or note | `wording.md` |
 | write speaker notes, fix their format, or cut the speech to fit the slot | `speaker-notes.md` |
 | verify the deck, answer "is this accurate?", or check a claim the user dictated | `accuracy-review.md` |

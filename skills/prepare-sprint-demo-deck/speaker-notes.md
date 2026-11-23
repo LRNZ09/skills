@@ -51,11 +51,9 @@ Now we let the player retry on its own, so the picture just waits and carries on
   the greeting, the "what's coming" line and every transition differently: the room hears
   the same deck format every sprint. The two closing lines may stay the same.
 - Introduce each problem in user terms before the finding or fix.
-- The slide's status line carries the status, so a note doesn't repeat it ("with the next
-  release…", "that one's in the next release"). Say it only when it adds something the slide
-  doesn't: a consequence ("until then production still goes over") or a caveat ("the data
-  check is still pending"). Work still in review or in progress is the exception: say so in
-  the same sentence as the claim, and never say "now" about unmerged work.
+- A note, like its slide, describes the change and not where it stands in the release (see
+  "Merged work only" in `slide-patterns.md`). Keep a limit as a condition in plain speech
+  ("it only works on TVs that count frames").
 - Prefer the symptom and the fix over the mechanism. If the presenter says it's hard to
   picture, cut the mechanism from the note and keep it on the slide.
 - Contractions, short sentences, one idea per sentence.

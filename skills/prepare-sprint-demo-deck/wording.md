@@ -21,7 +21,7 @@ Rules for every slide line, caption and spoken note. The audience hears each lin
 | Say internal terms in the audience's words | "a recording played right after the show" | "a recording whose end padding was still running", in front of a room that includes non-developers |
 | Shorten a label once the context is set | "the PR review skill", after the slide has introduced the skills | the full product-qualified name in every line |
 | Use the technically right verb | "bundled twice" (it was in the build) | "downloaded twice" |
-| Carry the status into every line about the item | "a small resolver clean-up, still in review" | "the resolver now resets" when its PR is still open |
+| State a limit as a condition, not a stage (see "Merged work only" in `slide-patterns.md`) | "on TVs that count frames" | "in testing" |
 | State the condition a claim depends on | "on development PRs", "uncompressed", "free users could get" | the claim without its condition |
 | Count correctly | "the PR review skill" when one skill changed | "the skills" |
 | Name the mechanism that changed | "their own access token" | "their own bot" when the token is what changed |
@@ -54,13 +54,13 @@ Real corrections, generalised. Use them as the bar.
 | "In TV search, a click opens what you clicked." | nobody knows when it didn't | "a pointer click on <brand> TVs opens the tile under it, not the focused one" |
 | "Each PR keeps one NX and one Lighthouse report" | the second report only appears for some PRs, and only on one branch | "Each PR into development keeps one NX report, plus a Lighthouse report when the app changes" |
 | "Now it's less than half the size." | true only uncompressed | "Now it's less than half the size uncompressed." |
-| "Claude Code skills for every team" (closing slide) | the PRs are still open | "Claude Code skills on their way to other teams" |
+| "<brand>'s TV browser doesn't count frames, so there the check turns itself off" | rests on one browser test on one TV, not on the app | "In our test, <brand>'s TV browser didn't" |
 | "**Now the time counts, and the bar is grey where it isn't recorded yet.**" (demo caption) | a bold "Now…" sentence under screenshots reads as a big announcement | "After the fix, the time counts and the bar is grey past what's recorded so far." |
 
 ## Humour
 
-- One light aside per slide at most, usually in the status line's parentheses:
-  `_⚡ Performance, on development (still behind a feature flag, no worries 😉)._`
+- One light aside per slide at most, usually in the type line's parentheses:
+  `_⚡ Performance (the player went on a diet 😉)._`
 - Never put a joke inside a factual claim, and re-read it next to the facts around it: a
   joke that changes meaning ("just to be sure") is an inaccuracy.
 - If it feels forced, cut it.
