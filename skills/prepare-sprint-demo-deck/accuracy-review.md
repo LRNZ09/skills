@@ -1,15 +1,8 @@
 # Accuracy review
 
 Run on the whole deck before calling it ready, after any batch of factual edits, and for
-any single claim the user questions. Goal: nothing on a slide or in a note can be refuted.
-
-## Contents
-
-- Sources, in order of trust
-- Procedure
-- Checker brief
-- Reporting
-- Claims that were wrong before
+any single claim the user questions. Goal: nothing on a slide, card or in a note can be
+refuted.
 
 ## Sources, in order of trust
 
@@ -18,7 +11,7 @@ any single claim the user questions. Goal: nothing on a slide or in a note can b
 | code on the default branch | behaviour, defaults, which platforms, which errors, what is excluded |
 | merge commit message and diff | what shipped, mechanism, scope |
 | PR description and **live** state | sizes and measurements, test plan, known gaps, open vs merged |
-| tracker issue and **live** status | ticket intent, sprint membership, whether it's still in progress |
+| tracker issue and **live** fields | ticket intent, priority, sprint membership, whether it's still in progress |
 | recordings and their logged facts | what a demo shows, real durations and timings |
 | the user | their own experience and plans: keep them as user-supplied, but still compare them with the record and flag any disagreement for the user's call |
 
@@ -27,32 +20,30 @@ wins. A claim the ticket never makes (a device, a brand, a number) needs a code 
 
 ## Procedure
 
-1. Split the deck into claims: every sentence on every slide, caption, footer and note that
-   states a fact, number, scope, condition or cause. Flag any release status or unmerged
-   item along the way (see "Merged work only" in `slide-patterns.md`).
+1. Split the deck into claims: every sentence on every slide, card, caption, footer and
+   note that states a fact, number, priority, scope, condition or cause.
 2. Check each claim against the sources above. With subagents available, run one
-   independent checker per content slide, plus one consistency checker for the whole deck;
-   otherwise do the same passes yourself, one slide at a time.
-3. Run the consistency pass: names, terms, conditions and numbers match across each slide,
-   its note, its caption and the closing slide; footer keys belong to that slide's items and
-   follow its order; the title slide's date matches the demo day.
-4. Re-check from its live state that every item is merged (for a ticket, every one of its
-   PRs), even if it was checked yesterday.
-5. Review each finding yourself before reporting it. Checkers' own fixes can be wrong (for
+   independent checker per item (each demo item and each card), plus one consistency
+   checker for the whole deck; otherwise do the same passes yourself, one item at a time.
+3. Run the consistency pass: names, terms, conditions and numbers match across each slide
+   or card, its note, its caption and the closing slide; footer keys belong to that slide's
+   items and follow its reading order; the title slide's date matches the demo day.
+4. Review each finding yourself before reporting it. Checkers' own fixes can be wrong (for
    example, calling something a "fallback" when the code tries it first): verify the fix
    against the source too.
-6. Report, wait for the user's decision, apply, re-render, and re-run the checks that the
-   edits touched.
+5. Report, then apply what the user picks and re-run the checks that the edits touched.
 
 ## Checker brief
 
-Give each checker this shape (fill in the slide and its sources):
+Give each checker this shape (fill in the item and its sources):
 
-> Fact-check slide N and its speaker note. For every factual claim, try to **refute** it
-> from primary sources: code on the default branch, the merge commit, the PR description
-> and its live state, the tracker status. Flag wrong facts, wrong plurality, wrong
-> mechanism, overstated numbers, claims true only under a condition the text doesn't state,
-> any release status or unmerged work, and vague component names. Do not flag tone,
+> Fact-check item N: its slides or card, its type line, its demo caption if any, and its
+> spoken lines.
+> For every factual claim, try to **refute** it from primary sources: code on the default
+> branch, the merge commit, the PR description and its live state, the tracker's live
+> fields. Flag wrong facts, wrong plurality, wrong mechanism, overstated numbers, claims
+> true only under a condition the text doesn't state, a priority that differs from the live
+> ticket, any release status or unmerged work, and vague component names. Do not flag tone,
 > jokes, or simplifications that stay true. Mark the presenter's personal statements as
 > user-supplied. Report only what you can point at with evidence; prefer few solid findings.
 > For each, give a corrected sentence of similar length, in plain spoken English. Read-only:
@@ -69,12 +60,11 @@ Group findings for the user:
 1. **Wrong**: the claim is false. Lead with these.
 2. **Overstated**: true only under a condition, or too strong.
 3. **Needs your call**: user-supplied statements the record disagrees with, framing choices.
-4. **Against the rule**: unmerged items and release statuses (see "Merged work only" in
-   `slide-patterns.md`). Propose cutting the item, or cutting the status and keeping any
-   limit that holds at every stage as a condition.
+4. **Against the rule**: unmerged items and release statuses. Propose cutting the item, or
+   cutting the status and keeping any limit that holds at every stage as a condition.
 
 For each: the quote, one line of evidence, the proposed wording. End with what checked out,
-in one line. Apply nothing until the user says which to apply.
+in one line.
 
 ## Claims that were wrong before
 

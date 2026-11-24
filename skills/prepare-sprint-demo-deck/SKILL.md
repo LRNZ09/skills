@@ -24,9 +24,8 @@ Find what you can; ask one question for the rest.
 | Demo date | ask; it goes on the title slide |
 | Time slot | ask (a typical slot is 3 minutes) |
 | Deck folder | ask, or a new folder next to the prior decks |
-| Prior decks | reuse their format, theme, title slide and render setup |
+| Prior decks | reuse their theme, title slide and render setup |
 | Output | the deck source plus rendered PDF (with notes), HTML, and a notes text file |
-| Presenting browser | ask when the deck has video; presenter view and video controls differ by browser |
 
 ## Workflow
 
@@ -37,90 +36,69 @@ Do these in order. Report between phases; do not chain them silently.
      status changed, since the start of the previous sprint (this sprint plus the one before);
    - pull requests the presenter **authored** that were opened or merged since the start of
      the previous sprint, in **every** repository of the workspace, not only the main one;
-   - for each item: ticket key, PR, live tracker status, live PR state, and what actually
-     shipped (which can differ from the ticket title).
-   With more than a handful of items, verify them in parallel, one researcher per item.
-2. **Curate.** Keep issues the presenter worked on while assignee, and PRs they authored.
-   Leave out work they only reported or reviewed for someone else. When an issue changed
-   hands during the sprint, ask who should present it. Keep only merged work (a ticket once
-   all its PRs have merged). Grep every earlier deck for each candidate's ticket key and topic
-   and drop what one already showed. What waits comes back as a candidate next time by itself
-   (see "Merged work only" in `slide-patterns.md`).
-   Then build the slide plan: read `slide-patterns.md`.
-   Budget the slot before drafting: the script holds about
-   `(slot seconds − video seconds) × 140 / 60` spoken words (3 minutes with a 40 s video:
-   about 325). Give each planned slide its seconds. Items that don't fit become one-line
-   bullets on a grouped slide or move to the next deck; the user picks which.
+   - for each item: ticket key, PR, live tracker status and priority, live PR state, what
+     actually shipped (which can differ from the ticket title), and its demo media if any (a
+     video and its length, or before/after screenshots): look in the deck folder, else ask.
+   Looking back one sprint is what brings back work that waited last time, so keep no list
+   of it. With more than a handful of items, verify them in parallel, one researcher per item.
+2. **Curate.** Keep issues the presenter worked on while assignee, and PRs they authored;
+   leave out work they only reported or reviewed for someone else. When an issue changed
+   hands during the sprint, ask who should present it. Keep only merged work: a ticket goes
+   in once every PR for it has merged, and work without a ticket goes in PR by PR. A ticket
+   still in progress waits too, even when every PR so far has merged. Grep every
+   earlier deck for each candidate's ticket key and topic and drop what one already showed;
+   an item that merged after an earlier deck left it out is new to the room.
+   Then build the slide plan: read `slide-patterns.md`. Budget the slot before drafting
+   (Timing in `speaker-notes.md`). Items that don't fit their own slide become cards, or move
+   to the next deck; the user picks.
 3. **Draft slides.** Follow `slide-patterns.md` and `wording.md`, then render once and fix
    any overflow (`marp-rendering.md`), so the accuracy pass reviews wording that already
    fits.
 4. **Write speaker notes.** Read `speaker-notes.md`.
 5. **Verify.** Read `accuracy-review.md` and run it on the whole deck. Present findings and
    wait for approval before applying fixes: they change what the presenter will say.
-6. **Render and check layout.** Read `marp-rendering.md`. Re-render after every edit and
-   read the rendered slides back.
+6. **Render and check layout.** Read `marp-rendering.md`.
 7. **Hand over.** After the last edit, do one spelling and grammar pass over every slide,
-   caption and note in the source. List each change in one line, re-render, then report the
-   timing table, what was left out (it comes back by itself next time), what to check in the
-   dry run, and anything still open.
+   card, caption and note in the source, and list each change in one line. Before calling
+   the deck ready, and after any batch of edits, re-check live PR states and priorities, run
+   the consistency pass in `accuracy-review.md`, recompute timing, read back every rendered
+   slide, and re-render all outputs. Then report the timing table, what was left out, what
+   to check in the dry run, and anything still open.
 
 ## Non-negotiables
 
-1. **Accuracy.** Every factual sentence on a slide or in a note has a source you checked:
-   code on the default branch, merge commit, PR description and state, tracker status.
-   Numbers come from a measurement or a PR table, never from memory.
-2. **Merged only.** Every item in the deck is merged, and no slide or note says where it
-   stands in the release (see "Merged work only" in `slide-patterns.md`). Re-check PR states
-   right before handing over, since PRs merge overnight.
-3. **Ownership.** Only the presenter's assigned or authored work. Don't name another
-   developer for their dev work on an item unless the presenter really worked with them on
-   it, or the claim isn't true without it. State the outcome instead ("every event we send
-   carries all three", not "<name>'s change adds the other two"), and never present their
-   part as the presenter's. Reviewers and the ticket's reporter can stay named ("<name>
-   spotted it in the data and wrote the first fix"). Frame a change by what it adds ("now also fits a Mac that has a custom
-   setup"), not by what earlier work got wrong ("no longer assumes your Mac is fresh out of
-   the box"). A bugfix still states its symptom plainly.
-4. **Identifiers.** No PR numbers anywhere on slides. Ticket keys go in footers only.
-   No presenter name in footers. Slides without a ticket get no footer.
-5. **User wording.** Apply the user's wording as given, fixing grammar only, and say what
-   you fixed in one line. If their wording is inaccurate, say so in the same reply with the
-   evidence and an accurate alternative of similar length.
-6. **One term per concept.** The same thing has the same name on the slide, in its note, in
-   the caption and on the closing slide.
-7. **Fit.** No text may touch the footer or the slide edge. Trim your own wording first,
-   never the user's dictated text without asking.
-8. **Timing.** The script fits the slot with margin (see `speaker-notes.md`); recompute
-   after every note edit.
-9. **Ask before launching a browser** to inspect the deck.
-
-## Final checklist
-
-Run before calling the deck ready, and again after any batch of edits.
-
-| Area | Check |
-|---|---|
-| Accuracy | `accuracy-review.md` pass done; every finding applied or explicitly kept by the user |
-| Merged only | every item's PR is merged per its live state (a ticket only once all its PRs are); no earlier deck showed it; no slide or note gives a release status (see "Merged work only" in `slide-patterns.md`) |
-| Ownership | every item is the presenter's |
-| Ordering | footer keys, notes and closing summary follow the slide's item order (see `slide-patterns.md`) |
-| Labels | single-item slides open with an emoji + type line; ticketed grouped items start with the type emoji; one emoji per type throughout |
-| Identifiers | no PR numbers; footers hold ticket keys only, in item order |
-| Consistency | numbers, names, conditions and terms match across slide, note, caption and closing slide |
-| Wording | `wording.md` rules hold: exact components, stated conditions, no jargon, contractions, no repeated openers |
-| Spelling | one spelling and grammar pass over every slide, caption and note, after the last edit; each change reported |
-| Notes format | one sentence per paragraph, blank line between them, `[~N s]` budget first, stage cues on their own line |
-| Timing | total under the slot at 140 wpm and at least 10 s under at 150 wpm; report 160 wpm too |
-| Layout | every slide read back from the render; nothing touches the footer; emoji inline |
-| Media | videos load from relative paths, start as intended, and show what the caption claims |
-| Outputs | PDF, HTML and notes file regenerated from the final source |
+1. **Accuracy.** Numbers come from a measurement or a PR table, never from memory; every
+   other claim from a source in `accuracy-review.md`.
+2. **Merged only, no release status.** No slide, card or note says where an item stands in
+   the release: a sprint's work rarely reaches production in the same sprint, so a status
+   would read the same everywhere and tell the room nothing. No count or "Delivered" line
+   and no version number either. A limit that holds at every stage stays, written as a
+   condition: "on TVs that count frames", "behind a feature flag", "internal use for now",
+   "we haven't measured the gain yet". Re-check live PR states and priorities right before
+   handing over, since PRs merge and priorities change overnight.
+3. **Ownership.** Don't name another developer for their dev work on an item unless the
+   presenter really worked with them on it, or the claim isn't true without it. State the
+   outcome instead ("every event we send carries all three", not "<name>'s change adds the
+   other two"), and never present their part as the presenter's. Reviewers and the ticket's
+   reporter can stay named ("<name> spotted it in the data and wrote the first fix").
+4. **Identifiers.** No PR numbers anywhere; ticket keys only in footers (Footers in
+   `slide-patterns.md`).
+5. **The user's wording.** Apply it as given and fix grammar only, saying what you fixed in
+   one line ("need of" → "need for"). If it is inaccurate or ambiguous, or the record
+   disagrees with their own experience, say so in the same reply, in one short paragraph:
+   the evidence and an accurate alternative of similar length. Let them choose. Never trim or cut it without asking, not even to fit a slide or the
+   slot.
+6. **One term per concept.** Terms, numbers and conditions match across a slide or card, its
+   note, its caption and the closing slide ("drop" in both the slide and the note, not
+   "hiccup" in the note). When the user changes a phrase in one place, ask whether the
+   others should match.
 
 ## References
 
 | Open when you need to... | Read |
 |---|---|
-| decide what goes in, which slides exist, their order, templates, type labels or footers | `slide-patterns.md` |
-| write or edit any text on a slide, caption or note | `wording.md` |
-| write speaker notes, fix their format, or cut the speech to fit the slot | `speaker-notes.md` |
+| decide which slides and cards exist, their templates, type labels, priorities or footers | `slide-patterns.md` |
+| write or edit any text on a slide, card, caption or note | `wording.md` |
+| write speaker notes, fix their format, budget the slot or cut the speech to fit | `speaker-notes.md` |
 | verify the deck, answer "is this accurate?", or check a claim the user dictated | `accuracy-review.md` |
-| render, fix an overflowing slide or misplaced emoji, or set up video and presenter view | `marp-rendering.md` |
-| add autoplay and a full-window player to slide videos | `marp-engine.mjs` (bundled Marp engine; setup in `marp-rendering.md`) |
+| render, fix an overflowing slide or misplaced emoji, or set up the card grid, video autoplay (bundled `marp-engine.mjs`) or presenter view | `marp-rendering.md` |
