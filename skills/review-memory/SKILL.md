@@ -21,7 +21,7 @@ Find what you can; ask one question for the rest.
 | Scope | global, one project, or both. Default: global first (it loads in every session), then the current project. |
 | Review window | what "recent changes" are measured from: the last review — a tag if one marks it, otherwise the commit just before the last review's first change (`git log` of the memory folders shows it). Ask if it isn't clear. Without git there is no window; skip that card field. |
 | Depth | **Bulk sweep, then cards** when the memory has never been reviewed or is near the index cap; **cards only** for a routine review. |
-| Attribution | follow the user's and the harness's rules for commit trailers; never add AI attribution in public or work repos. |
+| Attribution | follow the user's and the harness's rules for commit trailers. |
 
 Run `scripts/inventory.sh <folder>...` for the baseline: index lines and bytes against the load cap, unindexed files, index lines pointing at missing files, and pending changes.
 
