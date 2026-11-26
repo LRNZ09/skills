@@ -89,11 +89,14 @@ ffmpeg -ss 50 -i out.mp4 -frames:v 1 -f image2 - | \
 
 Screencast frames arrive irregularly. A concat list with per-frame durations preserves real
 timing, but feeding that straight out as a variable-rate stream judders in most players.
-Resample explicitly:
+Resample explicitly. The concat demuxer ignores the duration of the last entry, so put the
+tail hold back by hand: `<tail>` is the last duration in frames.txt, and `<total>` is the sum
+of all its durations. `encodeArgs` in driver.mjs builds the same arguments.
 
 ```sh
 ffmpeg -f concat -safe 0 -i frames.txt \
-  -vf "fps=30,format=yuv420p" -fps_mode cfr \
+  -vf "fps=30:eof_action=pass,tpad=stop_mode=clone:stop_duration=<tail>,scale=in_range=full:out_range=limited,format=yuv420p" \
+  -t <total> -fps_mode cfr -color_range tv \
   -c:v libx264 -preset slow -crf 20 -movflags +faststart -y out.mp4
 ```
 
