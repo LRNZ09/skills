@@ -86,8 +86,9 @@ export const encodeArgs = (framesTxt, mp4, timeline, fps) => {
     // most in exactly the stretch a blackout makes black on purpose.
     // The concat demuxer never applies the duration of the last entry, and fps guesses the
     // length of the final frame from the gap before it. So tpad clones the final frame for the
-    // tail hold, and -t cuts the video at the total of the timeline.
-    "-vf", `fps=${fps},tpad=stop_mode=clone:stop_duration=${tail.toFixed(6)},scale=in_range=full:out_range=limited,format=yuv420p`,
+    // tail hold, and -t cuts the video at the total of the timeline. eof_action=pass keeps the
+    // final frame when a run ends on a burst: below 25 fps, fps otherwise drops it.
+    "-vf", `fps=${fps}:eof_action=pass,tpad=stop_mode=clone:stop_duration=${tail.toFixed(6)},scale=in_range=full:out_range=limited,format=yuv420p`,
     "-t", total.toFixed(6),
     "-fps_mode", "cfr", "-color_range", "tv",
     "-c:v", "libx264", "-preset", "slow", "-crf", "20", "-movflags", "+faststart", "-y", mp4,

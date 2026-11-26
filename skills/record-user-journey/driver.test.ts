@@ -189,8 +189,23 @@ describe("heldFrames", () => {
 // Runs the real ffmpeg, because the encode bugs live in how ffmpeg reads the concat list.
 describe("encodeArgs", () => {
   const run = promisify(execFile);
-  const FPS = 30;
   let dir = "";
+
+  interface Swatch {
+    readonly name: string;
+    readonly r: number;
+    readonly g: number;
+    readonly b: number;
+  }
+
+  // Frame n of a test video is a solid block of swatch n, so a sampled pixel names its frame.
+  const PALETTE = [
+    { name: "red", r: 255, g: 0, b: 0 },
+    { name: "lime", r: 0, g: 255, b: 0 },
+    { name: "blue", r: 0, g: 0, b: 255 },
+    { name: "yellow", r: 255, g: 255, b: 0 },
+    { name: "magenta", r: 255, g: 0, b: 255 },
+  ] as const satisfies readonly Swatch[];
 
   beforeAll(async () => {
     dir = await mkdtemp(join(tmpdir(), "record-user-journey-"));
@@ -200,13 +215,13 @@ describe("encodeArgs", () => {
     await rm(dir, { recursive: true, force: true });
   });
 
-  // Encodes solid-colour frames shown at the given timestamps, and returns the video length.
-  const encodedSeconds = async (name: string, timestamps: readonly number[], tail: number): Promise<number> => {
+  // Encodes one solid-colour frame per timestamp the way finish() does, and returns the mp4 path.
+  const encode = async (name: string, timestamps: readonly number[], tail: number, fps: number): Promise<string> => {
     const frames = await Promise.all(
       timestamps.map(async (ts, index) => {
         const file = join(dir, `${name}-${index}.jpg`);
-        const color = ["red", "green", "blue"].at(index % 3) ?? "red";
-        await run("ffmpeg", ["-hide_banner", "-loglevel", "error", "-f", "lavfi", "-i", `color=${color}:s=64x36`, "-frames:v", "1", "-y", file]);
+        const colour = PALETTE.at(index % PALETTE.length)?.name ?? "red";
+        await run("ffmpeg", ["-hide_banner", "-loglevel", "error", "-f", "lavfi", "-i", `color=${colour}:s=64x36`, "-frames:v", "1", "-y", file]);
         return { file, ts };
       }),
     );
@@ -214,16 +229,37 @@ describe("encodeArgs", () => {
     const mp4 = join(dir, `${name}.mp4`);
     const timeline = frameDurations(frames, tail);
     await writeFile(framesTxt, concatList(timeline));
-    await run("ffmpeg", [...encodeArgs(framesTxt, mp4, timeline, FPS)]);
+    await run("ffmpeg", [...encodeArgs(framesTxt, mp4, timeline, fps)]);
+    return mp4;
+  };
+
+  const secondsOf = async (mp4: string): Promise<number> => {
     const { stdout } = await run("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", mp4]);
     return Number(stdout);
   };
 
+  // The name of the palette swatch nearest to the video's picture at the given second.
+  const colourAt = async (mp4: string, at: number): Promise<string> => {
+    const { stdout } = await run(
+      "ffmpeg",
+      ["-v", "error", "-ss", String(at), "-i", mp4, "-frames:v", "1", "-vf", "scale=1:1", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
+      { encoding: "buffer" },
+    );
+    const [r = 0, g = 0, b = 0] = stdout;
+    const distance = (swatch: Swatch): number => (swatch.r - r) ** 2 + (swatch.g - g) ** 2 + (swatch.b - b) ** 2;
+    const [nearest] = PALETTE.toSorted((one, other) => distance(one) - distance(other));
+    return nearest?.name ?? "none";
+  };
+
   test("keeps the tail hold of the final frame in the video", async () => {
-    expect(await encodedSeconds("tail", [0, 0.5, 1], 2)).toBeCloseTo(3, 1);
+    expect(await secondsOf(await encode("tail", [0, 0.5, 1], 2, 30))).toBeCloseTo(3, 1);
   });
 
   test("keeps a single frame on screen for its whole tail hold", async () => {
-    expect(await encodedSeconds("single", [0], 3)).toBeCloseTo(3, 1);
+    expect(await secondsOf(await encode("single", [0], 3, 30))).toBeCloseTo(3, 1);
+  });
+
+  test("holds the final frame, not an earlier one, when a 24 fps run ends on a burst", async () => {
+    expect(await colourAt(await encode("burst", [0, 0.5, 1.44, 1.46, 1.48], 6, 24), 7.4)).toBe("magenta");
   });
 });
