@@ -12,6 +12,61 @@ import { spawn } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+// ---- frame timing ----------------------------------------------------------
+// Pure functions of frame timestamps, exported so that tests can check the timing rules
+// without Chrome or ffmpeg. GLOSSARY.md at the repo root defines the terms. A frame is
+// { file, ts } with ts in seconds, and every function expects the frames in time order.
+
+// The final frame stays on screen for at least this long, so the result of the last step does
+// not flash past. This floor wins over a lower journey maximum.
+const MIN_TAIL_SECONDS = 0.4;
+// A frame is held when its gap to the next frame is longer than this many median gaps...
+const HELD_MEDIAN_FACTOR = 2.5;
+// ...and longer than this, so that the list does not report small jitter in a fast run.
+const MIN_HELD_SECONDS = 0.4;
+
+// The time from each frame to the next one. The last frame has no next frame, so it has no gap.
+const gapsOf = (frames) =>
+  frames.flatMap((frame, index) => {
+    const next = frames.at(index + 1);
+    return next == null ? [] : [{ frame, seconds: next.ts - frame.ts }];
+  });
+
+const roundTo = (digits, value) => Number(value.toFixed(digits));
+
+// The tail hold: how long the final frame stays on screen. A static screen sends no frames,
+// so the real time on screen is from the last frame to the end of capture. The maximum stops
+// a long wait after the last frame from ending the video on a minute of stillness.
+export const tailHold = (lastFrame, stoppedAt, maxSeconds) =>
+  Math.max(MIN_TAIL_SECONDS, Math.min(maxSeconds, stoppedAt - lastFrame.ts));
+
+// The frame timeline: each frame with its on-screen duration. A duration is the exact gap to
+// the next frame, with no minimum. Frames arrive in bursts, and a 16ms minimum per frame added
+// seconds that did not happen, so the video drifted away from the caption timeline. The final
+// frame gets the tail hold.
+export const frameDurations = (frames, tail) => {
+  const last = frames.at(-1);
+  if (last == null) return [];
+  return [...gapsOf(frames).map(({ frame, seconds }) => ({ ...frame, seconds })), { ...last, seconds: tail }];
+};
+
+// The held frames: frames that stay on screen much longer than the median gap of the run.
+// A held frame is correct, because the screen did not change. The list tells the reader which
+// second of video repeats, so that they do not think it is a bug.
+export const heldFrames = (frames) => {
+  const [first] = frames;
+  const gaps = gapsOf(frames);
+  if (first == null) return [];
+  // A single gap is never held: it cannot be longer than 2.5 times itself.
+  const sorted = gaps.map(({ seconds }) => seconds).toSorted((a, b) => a - b);
+  const median = sorted.at(Math.floor(sorted.length / 2));
+  if (median == null) return [];
+  const threshold = Math.max(MIN_HELD_SECONDS, median * HELD_MEDIAN_FACTOR);
+  return gaps
+    .filter(({ seconds }) => seconds > threshold)
+    .map(({ frame, seconds }) => ({ atSeconds: roundTo(2, frame.ts - first.ts), heldFor: roundTo(2, seconds) }));
+};
+
 const main = async () => {
   const HERE = path.dirname(new URL(import.meta.url).pathname);
 
@@ -812,47 +867,21 @@ const main = async () => {
     await Promise.allSettled([...pendingWrites]);
     // Defensive: the list must be chronological whatever order the writes completed in.
     frames.sort((a, b) => a.ts - b.ts);
-    // How long the closing frame genuinely stayed on screen, capped so a very long trailing hold
-    // does not end the video on a minute of stillness.
-    const lastFrameHeldFor = frames.length
-      ? Math.min(journey.maxTailSeconds ?? 12, Math.max(0.4, (captureStoppedAt || Date.now() / 1000) - frames.at(-1).ts))
-      : 0.4;
-    if (frames.length) {
+    const lastFrame = frames.at(-1);
+    if (lastFrame) {
       // Every frame gets its measured on-screen duration and nothing is repeated. The usual
       // "repeat the last entry so its duration applies" idiom double-counts that duration,
       // which shows up as a video half a second longer than the run actually was.
-      const lines = [];
-      for (let i = 0; i < frames.length; i++) {
-        // The final frame's duration is the real time it stayed on screen, not a constant: a
-        // trailing hold over a static page emits no frames, and a hard-coded value threw that
-        // dwell away, leaving the payoff of the recording on screen for a fraction of a second.
-        // Durations are the exact gaps, never padded up to a floor: frames arrive in bursts,
-        // and a 16ms floor on each burst added seconds that never happened, so the video ran
-        // longer than the journey and drifted away from the caption timeline.
-        const dur = i < frames.length - 1
-          ? frames[i + 1].ts - frames[i].ts
-          : Math.max(0.4, lastFrameHeldFor);
-        lines.push(`file '${frames[i].file}'`, `duration ${dur.toFixed(6)}`);
-      }
+      const tail = tailHold(lastFrame, captureStoppedAt || Date.now() / 1000, journey.maxTailSeconds ?? 12);
+      const lines = frameDurations(frames, tail).flatMap(({ file, seconds }) => [`file '${file}'`, `duration ${seconds.toFixed(6)}`]);
       await writeFile(path.join(OUT, "frames.txt"), lines.join("\n"));
     }
-    // Publish the stalls instead of smoothing them over. A held frame in the finished video is
-    // legitimate -- the screen really did not change -- but the reader deserves to know which
-    // second of video repeats and why, rather than discovering it and assuming a bug.
-    const gaps = [];
-    if (frames.length > 2) {
-      const intervals = frames.slice(1).map((f, i) => f.ts - frames[i].ts);
-      const median = [...intervals].sort((a, b) => a - b)[Math.floor(intervals.length / 2)];
-      intervals.forEach((dur, i) => {
-        if (dur > Math.max(0.4, median * 2.5))
-          gaps.push({ atSeconds: +(frames[i].ts - frames[0].ts).toFixed(2), heldFor: +dur.toFixed(2) });
-      });
-    }
+    const held = heldFrames(frames);
     await writeFile(path.join(OUT, "journey.json"),
-      JSON.stringify({ journey: journey.name, frames: frames.length, firstMeta, fitScale, heldFrames: gaps, captionTimeline, summaryExclude: journey.summaryExclude ?? [], facts, ...extra }, null, 2));
+      JSON.stringify({ journey: journey.name, frames: frames.length, firstMeta, fitScale, heldFrames: held, captionTimeline, summaryExclude: journey.summaryExclude ?? [], facts, ...extra }, null, 2));
     await restoreBrowser();
     log(`captured ${frames.length} frames into ${OUT}`);
-    if (gaps.length) log(`held frames (the picture repeats here): ${gaps.map((g) => `${g.atSeconds}s for ${g.heldFor}s`).join(", ")}`);
+    if (held.length) log(`held frames (the picture repeats here): ${held.map((h) => `${h.atSeconds}s for ${h.heldFor}s`).join(", ")}`);
 
     if (ENCODE && frames.length) {
       const mp4 = path.join(OUT, `${journey.name ?? "journey"}.mp4`);
