@@ -67,6 +67,25 @@ export const heldFrames = (frames) => {
     .map(({ frame, seconds }) => ({ atSeconds: roundTo(2, frame.ts - first.ts), heldFor: roundTo(2, seconds) }));
 };
 
+// The ffmpeg concat list for a frame timeline: one file and one duration per frame. The usual
+// "repeat the last entry so its duration applies" idiom double-counts that duration, which
+// shows up as a video half a second longer than the run actually was.
+export const concatList = (timeline) =>
+  timeline.flatMap(({ file, seconds }) => [`file '${file}'`, `duration ${seconds.toFixed(6)}`]).join("\n");
+
+// The ffmpeg arguments that encode a concat list into an mp4. fps + cfr, not raw concat
+// timestamps: screencast frames arrive irregularly and a variable-rate stream judders in most
+// players.
+export const encodeArgs = (framesTxt, mp4, fps) => [
+  "-hide_banner", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", framesTxt,
+  // Screencast JPEGs decode full-range. Without the conversion libx264 tags the output
+  // yuvj420p/pc, and any player that ignores the flag crushes the blacks -- which matters
+  // most in exactly the stretch a blackout makes black on purpose.
+  "-vf", `fps=${fps},scale=in_range=full:out_range=limited,format=yuv420p`,
+  "-fps_mode", "cfr", "-color_range", "tv",
+  "-c:v", "libx264", "-preset", "slow", "-crf", "20", "-movflags", "+faststart", "-y", mp4,
+];
+
 const main = async () => {
   const HERE = path.dirname(new URL(import.meta.url).pathname);
 
@@ -868,14 +887,10 @@ const main = async () => {
     // Defensive: the list must be chronological whatever order the writes completed in.
     frames.sort((a, b) => a.ts - b.ts);
     const lastFrame = frames.at(-1);
-    if (lastFrame) {
-      // Every frame gets its measured on-screen duration and nothing is repeated. The usual
-      // "repeat the last entry so its duration applies" idiom double-counts that duration,
-      // which shows up as a video half a second longer than the run actually was.
-      const tail = tailHold(lastFrame, captureStoppedAt || Date.now() / 1000, journey.maxTailSeconds ?? 12);
-      const lines = frameDurations(frames, tail).flatMap(({ file, seconds }) => [`file '${file}'`, `duration ${seconds.toFixed(6)}`]);
-      await writeFile(path.join(OUT, "frames.txt"), lines.join("\n"));
-    }
+    const timeline = lastFrame
+      ? frameDurations(frames, tailHold(lastFrame, captureStoppedAt || Date.now() / 1000, journey.maxTailSeconds ?? 12))
+      : [];
+    if (timeline.length) await writeFile(path.join(OUT, "frames.txt"), concatList(timeline));
     const held = heldFrames(frames);
     await writeFile(path.join(OUT, "journey.json"),
       JSON.stringify({ journey: journey.name, frames: frames.length, firstMeta, fitScale, heldFrames: held, captionTimeline, summaryExclude: journey.summaryExclude ?? [], facts, ...extra }, null, 2));
@@ -885,18 +900,7 @@ const main = async () => {
 
     if (ENCODE && frames.length) {
       const mp4 = path.join(OUT, `${journey.name ?? "journey"}.mp4`);
-      // fps + cfr, not raw concat timestamps: screencast frames arrive irregularly and a
-      // variable-rate stream judders in most players.
-      const args = [
-        "-hide_banner", "-loglevel", "error", "-f", "concat", "-safe", "0",
-        "-i", path.join(OUT, "frames.txt"),
-        // Screencast JPEGs decode full-range. Without the conversion libx264 tags the output
-        // yuvj420p/pc, and any player that ignores the flag crushes the blacks -- which matters
-        // most in exactly the stretch a blackout makes black on purpose.
-        "-vf", `fps=${journey.fps ?? 30},scale=in_range=full:out_range=limited,format=yuv420p`,
-        "-fps_mode", "cfr", "-color_range", "tv",
-        "-c:v", "libx264", "-preset", "slow", "-crf", "20", "-movflags", "+faststart", "-y", mp4,
-      ];
+      const args = encodeArgs(path.join(OUT, "frames.txt"), mp4, journey.fps ?? 30);
       await new Promise((res) => spawn("ffmpeg", args, { stdio: "inherit" }).on("close", res));
       log("wrote", mp4);
     }
