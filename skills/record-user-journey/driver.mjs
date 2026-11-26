@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // Records a video of a user journey through a web app, driven over the Chrome DevTools
-// Protocol. Dependency-free: Node 22+ global WebSocket and fetch, ffmpeg for the encode.
+// Protocol. Dependency-free: Node 22.18+ global WebSocket, fetch and import.meta.main, ffmpeg
+// for the encode.
 //
 //   node driver.mjs journeys/my-journey.json [--port 9222] [--out ./recording] [--no-encode]
 //
 // The journey is data (see journeys/*.json and reference.md). This file only knows how to
 // execute steps; nothing here is specific to any application.
-import { realpathSync } from "node:fs";
 import { mkdir, writeFile, readFile, rm } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import path from "node:path";
@@ -948,8 +948,5 @@ const main = async () => {
   await finish();
 };
 
-// Record only when run as a script, so that tests can import this file. Node 22 has no
-// import.meta.main, so it compares real paths: a skill folder is often a symlink.
-const isMain =
-  import.meta.main ?? (process.argv[1] != null && realpathSync(process.argv[1]) === fileURLToPath(import.meta.url));
-if (isMain) await main();
+// Record only when run as a script, so that tests can import this file.
+if (import.meta.main) await main();
