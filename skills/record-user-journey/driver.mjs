@@ -73,18 +73,26 @@ export const heldFrames = (frames) => {
 export const concatList = (timeline) =>
   timeline.flatMap(({ file, seconds }) => [`file '${file}'`, `duration ${seconds.toFixed(6)}`]).join("\n");
 
-// The ffmpeg arguments that encode a concat list into an mp4. fps + cfr, not raw concat
-// timestamps: screencast frames arrive irregularly and a variable-rate stream judders in most
-// players.
-export const encodeArgs = (framesTxt, mp4, fps) => [
-  "-hide_banner", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", framesTxt,
-  // Screencast JPEGs decode full-range. Without the conversion libx264 tags the output
-  // yuvj420p/pc, and any player that ignores the flag crushes the blacks -- which matters
-  // most in exactly the stretch a blackout makes black on purpose.
-  "-vf", `fps=${fps},scale=in_range=full:out_range=limited,format=yuv420p`,
-  "-fps_mode", "cfr", "-color_range", "tv",
-  "-c:v", "libx264", "-preset", "slow", "-crf", "20", "-movflags", "+faststart", "-y", mp4,
-];
+// The ffmpeg arguments that encode the concat list of a frame timeline into an mp4. fps + cfr,
+// not raw concat timestamps: screencast frames arrive irregularly and a variable-rate stream
+// judders in most players.
+export const encodeArgs = (framesTxt, mp4, timeline, fps) => {
+  const tail = timeline.at(-1)?.seconds ?? 0;
+  const total = timeline.reduce((sum, { seconds }) => sum + seconds, 0);
+  return [
+    "-hide_banner", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", framesTxt,
+    // Screencast JPEGs decode full-range. Without the conversion libx264 tags the output
+    // yuvj420p/pc, and any player that ignores the flag crushes the blacks -- which matters
+    // most in exactly the stretch a blackout makes black on purpose.
+    // The concat demuxer never applies the duration of the last entry, and fps guesses the
+    // length of the final frame from the gap before it. So tpad clones the final frame for the
+    // tail hold, and -t cuts the video at the total of the timeline.
+    "-vf", `fps=${fps},tpad=stop_mode=clone:stop_duration=${tail.toFixed(6)},scale=in_range=full:out_range=limited,format=yuv420p`,
+    "-t", total.toFixed(6),
+    "-fps_mode", "cfr", "-color_range", "tv",
+    "-c:v", "libx264", "-preset", "slow", "-crf", "20", "-movflags", "+faststart", "-y", mp4,
+  ];
+};
 
 const main = async () => {
   const HERE = path.dirname(new URL(import.meta.url).pathname);
@@ -900,7 +908,7 @@ const main = async () => {
 
     if (ENCODE && frames.length) {
       const mp4 = path.join(OUT, `${journey.name ?? "journey"}.mp4`);
-      const args = encodeArgs(path.join(OUT, "frames.txt"), mp4, journey.fps ?? 30);
+      const args = encodeArgs(path.join(OUT, "frames.txt"), mp4, timeline, journey.fps ?? 30);
       await new Promise((res) => spawn("ffmpeg", args, { stdio: "inherit" }).on("close", res));
       log("wrote", mp4);
     }

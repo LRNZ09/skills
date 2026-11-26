@@ -1,5 +1,10 @@
-import { describe, expect, test } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import fc from "fast-check";
+import { execFile } from "node:child_process";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { promisify } from "node:util";
 import * as driver from "./driver.mjs";
 
 // driver.mjs is plain JS, so its frame timing interface is stated here.
@@ -21,9 +26,11 @@ interface FrameTiming {
   readonly tailHold: (lastFrame: Frame, stoppedAt: number, maxSeconds: number) => number;
   readonly frameDurations: (frames: readonly Frame[], tail: number) => readonly TimedFrame[];
   readonly heldFrames: (frames: readonly Frame[]) => readonly HeldFrame[];
+  readonly concatList: (timeline: readonly TimedFrame[]) => string;
+  readonly encodeArgs: (framesTxt: string, mp4: string, timeline: readonly TimedFrame[], fps: number) => readonly string[];
 }
 
-const { tailHold, frameDurations, heldFrames } = driver as FrameTiming;
+const { tailHold, frameDurations, heldFrames, concatList, encodeArgs } = driver as FrameTiming;
 
 const frameAt = (ts: number, index = 0): Frame => ({ file: `f${String(index + 1).padStart(6, "0")}.jpg`, ts });
 
@@ -176,5 +183,47 @@ describe("heldFrames", () => {
         expect(heldFrames(frames).length).toBeLessThanOrEqual(Math.max(0, frames.length - 1));
       }),
     );
+  });
+});
+
+// Runs the real ffmpeg, because the encode bugs live in how ffmpeg reads the concat list.
+describe("encodeArgs", () => {
+  const run = promisify(execFile);
+  const FPS = 30;
+  let dir = "";
+
+  beforeAll(async () => {
+    dir = await mkdtemp(join(tmpdir(), "record-user-journey-"));
+  });
+
+  afterAll(async () => {
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  // Encodes solid-colour frames shown at the given timestamps, and returns the video length.
+  const encodedSeconds = async (name: string, timestamps: readonly number[], tail: number): Promise<number> => {
+    const frames = await Promise.all(
+      timestamps.map(async (ts, index) => {
+        const file = join(dir, `${name}-${index}.jpg`);
+        const color = ["red", "green", "blue"].at(index % 3) ?? "red";
+        await run("ffmpeg", ["-hide_banner", "-loglevel", "error", "-f", "lavfi", "-i", `color=${color}:s=64x36`, "-frames:v", "1", "-y", file]);
+        return { file, ts };
+      }),
+    );
+    const framesTxt = join(dir, `${name}.txt`);
+    const mp4 = join(dir, `${name}.mp4`);
+    const timeline = frameDurations(frames, tail);
+    await writeFile(framesTxt, concatList(timeline));
+    await run("ffmpeg", [...encodeArgs(framesTxt, mp4, timeline, FPS)]);
+    const { stdout } = await run("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", mp4]);
+    return Number(stdout);
+  };
+
+  test("keeps the tail hold of the final frame in the video", async () => {
+    expect(await encodedSeconds("tail", [0, 0.5, 1], 2)).toBeCloseTo(3, 1);
+  });
+
+  test("keeps a single frame on screen for its whole tail hold", async () => {
+    expect(await encodedSeconds("single", [0], 3)).toBeCloseTo(3, 1);
   });
 });
