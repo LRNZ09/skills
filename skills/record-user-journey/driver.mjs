@@ -96,7 +96,7 @@ export const encodeArgs = (framesTxt, mp4, timeline, fps) => {
 };
 
 const main = async () => {
-  const HERE = path.dirname(new URL(import.meta.url).pathname);
+  const HERE = path.dirname(fileURLToPath(import.meta.url));
 
   const argv = process.argv.slice(2);
   const VALUED = new Set(["--port", "--out"]);
